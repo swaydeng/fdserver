@@ -1,4 +1,5 @@
 module.exports = [
+	'app',
 	'less',
 	'markdown',
 	'jade',
