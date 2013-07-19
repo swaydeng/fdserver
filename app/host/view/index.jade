@@ -1,0 +1,27 @@
+doctype
+html
+	head
+		meta(charset='utf-8')
+		title Host管理
+
+		link(rel='stylesheet', href='/assets/vendor/bootstrap/css/bootstrap.css')
+		link(rel='stylesheet', href='/host/css/index.stylus')
+
+	body
+		#doc.container
+			h1 Host管理
+
+			ul.hosts
+				each host in hosts
+					include element/item
+
+			button.add.btn
+				i.icon-plus
+				添加
+
+			.alert.info-bar
+
+		script(src='/assets/vendor/jquery.js')
+		script(src='/assets/js/jquery.guardOn.js')
+		script(src='/assets/js/utils.js')
+		script(src='/host/js/index.js')

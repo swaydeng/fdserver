@@ -1,0 +1,48 @@
+#doc
+	margin-bottom 30px
+
+.hosts
+	padding 0
+	margin 0
+
+	.host
+		display block
+
+		.name
+			width 600px
+			height 40px
+
+			.editor
+				display none
+
+			&.status-edit
+				.text
+					display none
+				.editor
+					display block
+
+
+		.body textarea
+			width 770px
+			height 200px
+
+		
+		.switch-off
+			display none
+
+		&.status-enabled
+			.switch-on
+				display none
+
+			.switch-off
+				display inline-block
+
+
+.info-bar
+	display none
+	position fixed
+	width 200px
+	left 50%
+	top 0
+	margin-left -100px
+	text-align center

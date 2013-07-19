@@ -1,0 +1,25 @@
+- cn = host.enabled ? 'status-enabled' : ''
+
+li.host(class="#{cn}")
+	h3.name
+		.text= host.name
+		input.editor.span5(type='text')
+
+	.row
+		.body.span10
+			textarea= host.body
+
+		.op.span2
+			p
+				button.switch-on.btn
+					i.icon-play
+					打开
+
+				button.switch-off.btn
+					i.icon-pause
+					关闭
+
+			p
+				button.btn.remove
+					i.icon-remove
+					移除
