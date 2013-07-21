@@ -2,15 +2,23 @@
 var util = require('util'),
 	os = require('os'),
 	cluster = require('cluster'),
+	Path = require('path'),
 	server = require('../lib/server'),
 	config = require('../config'),
 	filters = require('../filters'),
 	utils = require('../lib/utils');
 
+
 config = utils.extend({
 	port: 80,
-	filters: filters	
+	filters: filters
 }, config);
+
+
+var hosts = config.hosts || {};
+hosts['127.0.0.1'] = hosts['127.0.0.1'] || {
+	appRoot: Path.normalize(Path.join(__dirname, '../app'))
+};
 
 
 var args = process.argv.slice(2),
