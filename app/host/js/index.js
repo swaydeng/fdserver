@@ -13,6 +13,8 @@ var Index = {
 		this.handleAdd();
 		this.handleStatus();
 		this.handleRemove();
+
+		this.update(false);
 	},
 
 	
