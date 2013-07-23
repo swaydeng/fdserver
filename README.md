@@ -1,4 +1,4 @@
-fd-server 0.6.3
+fd-server 0.7.1
 ===============
 
 fd-server是一个使用node js开发的服务器
@@ -41,12 +41,16 @@ fd-server是一个使用node js开发的服务器
 6. delay	- 资源延迟返回
 7. jade		- jade模板格式支持
 8. markdown	- markdown格式支持
+9. stylus	- stylus开发的支持
+10. app		- 对具有界面功能的开发支持
+	host		- 对host进行管理的一个app demo
+
 
 ## 将支持特性
 
 1. 可视化配置
 2. autoresponse支持
-3. sass支持
+3. radiance app开发的支持
 4. fdlint自动描扫描
 
 
@@ -56,13 +60,16 @@ fd-server是一个使用node js开发的服务器
 
 config.js是一个普通的js文件，因此你可以在里面书写任意的js代码
 
+修改config.js后，服务器将自动重新启动
+
+
 ### 通用
 
 #### logger
 
 日志配置，可以参考 [Logger](http://www.senchalabs.org/connect/logger.html) 配置
 
-默认为'default'
+默认为空，即不输出日志
 
 #### port
 
@@ -175,6 +182,7 @@ merge文件实时编译
 
 因为有些页面在没merge时，可能不能正常工作，可以开启这个选项来开发。
 
+
 ### less
 
 less文件进行实时编译
@@ -259,6 +267,7 @@ http://cdn.c.aliimg.com/css/ui/form|css/ui/table|...|css/ui/tab.css
 如访问 http://style.c.aliimg.com/app/butterfly/js/lang/class.js?delay=2
 
 则过2s才返回这个url的内容
+
 
 ### jade
 
