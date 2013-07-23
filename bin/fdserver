@@ -1,43 +1,79 @@
 #!/usr/bin/env node
 var util = require('util'),
-	os = require('os'),
-	cluster = require('cluster'),
 	Path = require('path'),
-	server = require('../lib/server'),
-	config = require('../config'),
-	filters = require('../filters'),
+	fs = require('fs'),
+	cluster = require('cluster'),
+	
 	utils = require('../lib/utils');
-
-
-config = utils.extend({
-	port: 80,
-	filters: filters
-}, config);
-
-
-var hosts = config.hosts || {};
-hosts['127.0.0.1'] = hosts['127.0.0.1'] || {
-	appRoot: Path.normalize(Path.join(__dirname, '../app'))
-};
 
 
 var args = process.argv.slice(2),
 	debug = args.indexOf('-d') !== -1;
 
-debug && (config.debug = true);
 
-util.debug = config.debug ? util.debug : function() {};
+util.debug = debug ? utils.debug : function() {};
+
 
 if (!debug && cluster.isMaster) {
-	for (var i = 0, c = os.cpus().length * 2; i < c; i++) {
-		cluster.fork();
-	}
+	var configPath = Path.normalize(Path.join(__dirname, '../config.js'));
+
+	var startCluster = function() {
+		for (var id in cluster.workers) {
+			cluster.workers[id].kill();
+		}
+
+		var os = require('os');
+		for (var i = 0, c = os.cpus().length * 2; i < c; i++) {
+			cluster.fork();
+		}
+		
+		var watcher = fs.watch(configPath);
+		watcher.on('change', function() {
+			utils.schedule('start-cluster', startCluster, 2000);
+		});
+	};
+
 
 	cluster.on('exit', function(worker, code, signal) {
 		util.log('worker ' + worker.process.pid + ' died');
 	});
-} else {
+
+
+	startCluster();
+
+	return;
+}
+
+
+var server = require('../lib/server'),
+	filters = require('../filters');
+
+
+var start = function() {
+	var config = prepareConfig(require('../config'));
+
 	util.log('create server: ' + config.port);
 	var app = server(config);
 	app.listen(config.port);
-}
+};
+
+
+var prepareConfig = function(config) {
+	config = utils.extend({
+		port: 80,
+		filters: filters	
+	}, config);
+
+
+	var hosts = config.hosts || {};
+	hosts['127.0.0.1'] = hosts['127.0.0.1'] || {
+		appRoot: Path.normalize(Path.join(__dirname, '../app'))
+	};
+
+	debug && (config.debug = true);
+
+	return config;
+};
+
+
+start();
