@@ -43,7 +43,7 @@ fd-server是一个使用node js开发的服务器
 8. markdown	- markdown格式支持
 9. stylus	- stylus开发的支持
 10. app		- 对具有界面功能的开发支持
-	host		- 对host进行管理的一个app demo
+	1. host		- 对host进行管理的一个app demo
 
 
 ## 将支持特性
@@ -79,22 +79,24 @@ config.js是一个普通的js文件，因此你可以在里面书写任意的js�
 
 可以独立配置多个host
 
-	{
-		// 全局配置
-		...
+~~~js
+{
+	// 全局配置
+	...
 
-		hosts: {
-			'style.c.aliimg.com': {
-				root: '/Users/bencode/webroot/styles'
-			},
+	hosts: {
+		'style.c.aliimg.com': {
+			root: '/Users/bencode/webroot/styles'
+		},
 
-			'assets.1688.com': {
-				root: '/Users/bencode/webroot/static_site'
-			}
-
-			...
+		'assets.1688.com': {
+			root: '/Users/bencode/webroot/static_site'
 		}
+
+		...
 	}
+}
+~~~
 
 如上例配置了两个host, 每个host的root配置成资源目录
 
@@ -111,32 +113,34 @@ config.js是一个普通的js文件，因此你可以在里面书写任意的js�
 
 例
 
-	{
-		hosts: {
+~~~js
+{
+	hosts: {
 
-			'style.c.aliimg.com': {
+		'style.c.aliimg.com': {
 
-				root: '/Users/bencode/webroot/styles',
+			root: '/Users/bencode/webroot/styles',
 
-				rewrite: [
-				{
-					from: '^/app/offer/(.*)$',
-					to: 'styleoffer/$1'
-				},
+			rewrite: [
+			{
+				from: '^/app/offer/(.*)$',
+				to: 'styleoffer/$1'
+			},
 
-				{
-					from: '^/app/butterfly/(.*)$',
-					to: 'butterfly/$1'
-				},
+			{
+				from: '^/app/butterfly/(.*)$',
+				to: 'butterfly/$1'
+			},
 
-				{
-					from: '^(.*)$',
-					to: 'http://110.75.196.23$1'
-				}
-				]
+			{
+				from: '^(.*)$',
+				to: 'http://110.75.196.23$1'
 			}
+			]
 		}
 	}
+}
+~~~
 
 1. rewrite 需要配置成一个数组，每个数组元素是一个对象
 2. 每个rewrite对象需要指定 from 和 to 属性
@@ -168,15 +172,16 @@ merge文件实时编译
 
 如果配置
 
-	{
-		hosts: {
-			'style.c.aliimg.com': {
-				root: ...,
-
-				merge: true
-			}
+~~~js
+{
+	hosts: {
+		'style.c.aliimg.com': {
+			root: ...,
+			merge: true
 		}
 	}
+}
+~~~
 
 则js/css符合merge文件格式时，会返回merge后的结果文件
 
@@ -194,15 +199,17 @@ less文件进行实时编译
 
 例
 
-	{
-		hosts: {
-			'style.c.aliimg.com': {
-				less: {
-					...
-				}
+~~~js
+{
+	hosts: {
+		'style.c.aliimg.com': {
+			less: {
+				...
 			}
 		}
 	}
+}
+~~~
 
 [注] 
 
@@ -210,21 +217,23 @@ less文件进行实时编译
 
 例：
 
-	'style.c.aliimg.com': {
-		root: '/Users/bencode/webroot/styles',
-		merge: true,
-		rewrite: [
-			{
-				from: /^\/app\/butterfly\/(.*)\.css\b/,
-				to: 'butterfly/$1.less'
-			},
+~~~js
+'style.c.aliimg.com': {
+	root: '/Users/bencode/webroot/styles',
+	merge: true,
+	rewrite: [
+		{
+			from: /^\/app\/butterfly\/(.*)\.css\b/,
+			to: 'butterfly/$1.less'
+		},
 
-			{
-				from: '^/app/butterfly/(.*)$',
-				to: 'butterfly/$1'
-			}
-		]
-	...
+		{
+			from: '^/app/butterfly/(.*)$',
+			to: 'butterfly/$1'
+		}
+	]
+...
+~~~
 
 以上将 app/butterfly/.../some.css 重写向成 app/butterfly/.../some.less以提供对less的支持
 
@@ -253,9 +262,11 @@ http://cdn.c.aliimg.com/css/ui/form|css/ui/table|...|css/ui/tab.css
 
 如指定了 concatSplit: true, 则会得到类似以下输出:
 
-	@import url(http://style.c.aliimg.com/sys/css/universal/masthead/industry-v1-min.css);
-	@import url(http://style.c.aliimg.com/fdevlib/css/fdev-v4/editor/editor-min.css);
-	@import url(http://style.c.aliimg.com/fdevlib/css/fdev-v4/core/fdev-flying.css);
+~~~css
+@import url(http://style.c.aliimg.com/sys/css/universal/masthead/industry-v1-min.css);
+@import url(http://style.c.aliimg.com/fdevlib/css/fdev-v4/editor/editor-min.css);
+@import url(http://style.c.aliimg.com/fdevlib/css/fdev-v4/core/fdev-flying.css);
+~~~
 
 
 ### delay
@@ -289,6 +300,35 @@ http://cdn.c.aliimg.com/css/ui/form|css/ui/table|...|css/ui/tab.css
 可以指定参数 markdown来配置 markdown parser
 
 参考文档 [markdown](https://github.com/evilstreak/markdown-js)
+
+
+### stylus
+
+支持stylus文件的解析
+
+如果访问的文件后缀为 .stylus 或者 url带有参数 ?type=stylus, 则会解析内容成css代码
+
+
+### app
+
+可以使用app提供的开发特性来开发具有ui的功能
+
+可以参考内置demo:
+	app/host
+
+可以通过访问http://127.0.0.1/host进行app的访问
+
+你也可以建立自己的app集
+
+~~~js
+hosts: {
+	myapp: {
+		appRoot: '/Users/bencode/work/myapp'
+	}
+}
+~~~
+
+你可以在自己的目录下开发app
 
 
 ## 扩展和开发
