@@ -297,6 +297,8 @@ http://cdn.c.aliimg.com/css/ui/form|css/ui/table|...|css/ui/tab.css
 
 如果访问的文件后缀为 .md 或者 url带有参数 ?type=md, 则会解析内容成html代码
 
+添加?autoreload, 则浏览器有自动刷新的功能，方便文档的编写
+
 可以指定参数 markdown来配置 markdown parser
 
 参考文档 [markdown](https://github.com/evilstreak/markdown-js)
