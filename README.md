@@ -42,7 +42,7 @@ fd-server是一个使用node js开发的服务器
 7. jade		- jade模板格式支持
 8. markdown	- markdown格式支持
 9. stylus	- stylus开发的支持
-10. app		- 对具有界面功能的开发支持
+10. app		- 对具有界面功能的开发支持, 目前内置的app有:
 	1. host		- 对host进行管理的一个app demo
 
 
