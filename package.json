@@ -49,7 +49,7 @@
 		"url": "https://github.com/fangdeng/fdserver"
 	},
 
-	"main": "index",
+	"main": "./lib/server",
 
 	"bin": {
 		"fdserver": "./bin/fdserver"
