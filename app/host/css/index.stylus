@@ -9,17 +9,33 @@
 		display block
 
 		.name
-			width 600px
 			height 40px
+
+			.text
+				float left
+				margin-right 8px
 
 			.editor
 				display none
+
+			.status-label
+				float left
+
+			.status-open
+				color #669933
+				display none
+
+			.status-close
+				color #cc3333
 
 			&.status-edit
 				.text
 					display none
 				.editor
 					display block
+
+				.status-label
+					display none
 
 
 		.body textarea
@@ -36,6 +52,12 @@
 
 			.switch-off
 				display inline-block
+
+			.status-open
+				display block
+
+			.status-close
+				display none
 
 
 .info-bar
