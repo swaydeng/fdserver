@@ -153,6 +153,12 @@ var Index = {
 				} else {
 					self.alert('error', o.message || '保存失败');
 				}
+			},
+			error: function() {
+				self.alert('error', '网络繁忙');
+				setTimeout(function() {
+					window.location.reload();	
+				}, 1000);
 			}
 		});
 	},
