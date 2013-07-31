@@ -7,6 +7,7 @@ html
 		link(rel='stylesheet', href='#{assets}/vendor/bootstrap/css/bootstrap.min.css')
 		link(rel='stylesheet', href='#{assets}/vendor/bootstrap/css/bootstrap-responsive.min.css')
 		link(rel='stylesheet', href='#{assets}/vendor/google-code-prettify/prettify.css')
+		link(rel='stylesheet', href='#{assets}/filter/markdown/markdown.stylus')
 
 		body
 		#doc.container
@@ -15,6 +16,8 @@ html
 				div!= body
 				//end-markdown-body
 
+			.nav-container
+
 		script(src='#{assets}/vendor/jquery.js')
 		script(src='#{assets}/vendor/google-code-prettify/prettify.js')
-		script(src='#{assets}/js/filter/markdown.js')
+		script(src='#{assets}/filter/markdown/markdown.js')

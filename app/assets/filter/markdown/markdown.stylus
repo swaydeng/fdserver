@@ -1,0 +1,30 @@
+.nav-container
+	position fixed
+
+	top 30px
+	right 30px
+
+	padding 10px 0
+
+	width 270px
+
+	background #f7f5fa
+
+	ul
+		margin 0
+		padding 0
+
+	li
+		list-style none
+
+	a
+		display block
+		padding 5px 20px
+		color #716b7a
+		text-decoration none
+
+		&:hover
+			background #eee	
+
+	.child a
+		padding-left 40px
