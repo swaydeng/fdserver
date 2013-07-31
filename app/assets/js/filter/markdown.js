@@ -35,7 +35,8 @@ var Reload = {
 		var self = this,
 			defer = $.Deferred(),
 			path = window.location.href,
-			container = $('div.markdown-body');
+			container = $('div.markdown-body'),
+			stop = $(window).scrollTop();
 
 		$.ajax(path, {
 			cache: false,
@@ -44,6 +45,7 @@ var Reload = {
 				if (self.last !== body) {
 					container.html(body);
 					$('body').trigger('reload');
+					$(window).scrollTop(stop);
 					self.last = body;
 				}
 				defer.resolve();
