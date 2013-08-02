@@ -1,0 +1,6 @@
+.info-form
+	margin 30px 0 50px
+
+.console-panel
+	overflow auto
+	height 300px

@@ -1,0 +1,33 @@
+doctype
+html
+	head
+		meta(charset='utf-8')
+		title Radiance App开发
+		link(rel='stylesheet', href='/assets/vendor/bootstrap/css/bootstrap.css')
+		link(rel='stylesheet', href='/app/css/index.stylus')
+
+	body
+		#doc.container
+			.page-header
+				h2 App开发环境
+		
+			.info-form
+
+				.control-group
+					label.control-label(for='info-path-text') 站点资源路径
+					input#info-path-text.form-control.input-xxlarge(type='text', placeholder='', value='#{info.path}')
+
+				.control-group
+					label.control-label(for='info-remote-text') 测试机IP
+					input#info-remote-text.form-control.input-xxlarge(type='text', placeholder='127.0.0.1', value='#{info.remote}')
+
+
+			.console-panel.well
+				p 1. 输入资源本地路径
+				p 2. 输入测试机IP
+				p 3. 启动		
+
+
+		script(src='/assets/vendor/jquery.js')
+		script(src='/assets/js/utils.js')
+		script(src='/app/js/index.js')
