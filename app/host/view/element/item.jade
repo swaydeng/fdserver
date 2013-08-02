@@ -1,6 +1,6 @@
 - cn = host.enabled ? 'status-enabled' : ''
 
-li.host(class="#{cn}")
+li.host(class='#{cn}', data-order='#{host.order}')
 	h3.name
 		.text= host.name
 		input.editor.span5(type='text')

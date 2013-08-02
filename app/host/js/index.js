@@ -75,11 +75,13 @@ var Index = {
 
 
 	loadItem: function() {
-		var hosts = $('ul.hosts', this.div);
+		var self = this,
+			hosts = $('ul.hosts', this.div);
 		return $.ajax('/host/item', {
 			cache: false,
 			success: function(html) {
 				var li = $(html);
+				li.data('order', self.createOrder());
 				li.hide().appendTo(hosts).slideDown();
 			}
 		});
@@ -94,6 +96,9 @@ var Index = {
 				li = btn.closest('.host');
 
 			li.toggleClass('status-enabled', btn.hasClass('switch-on'));
+			if (li.hasClass('status-enabled')) {
+				li.data('order', self.createOrder());
+			}
 			return self.update();
 		});
 	},
@@ -123,9 +128,24 @@ var Index = {
 			host.name = $('.text', li).text();
 			host.body = $.trim($('.body textarea', li).val());
 			host.enabled = li.hasClass('status-enabled');
+			host.order = parseInt(li.data('order')) || 0;
 			hosts.push(host);
 		});
 		return hosts;
+	},
+
+
+	createOrder: function() {
+		var lis = $('li.host', this.div),
+			ret = 0;
+		lis.each(function() {
+			var li = $(this),
+				order = parseInt(li.data('order')) || 0;
+
+			ret = order > ret ? order: ret;
+		});
+
+		return ret + 1;
 	},
 
 

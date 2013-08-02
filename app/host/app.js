@@ -91,6 +91,10 @@ function writeHosts(hosts, fn) {
 	var path = getHostPath(),
 		body = [];
 
+	hosts = hosts.slice(0).sort(function(left, right) {
+		return left.order - right.order;
+	}).reverse();
+
 	hosts.forEach(function(host) {
 		if (host.enabled) {
 			body.push('##' + host.name);
