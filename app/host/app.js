@@ -88,21 +88,39 @@ function getHostPath() {
 
 
 function writeHosts(hosts, fn) {
-	var path = getHostPath(),
-		body = [];
-
 	hosts = hosts.slice(0).sort(function(left, right) {
 		return left.order - right.order;
-	}).reverse();
-
-	hosts.forEach(function(host) {
-		if (host.enabled) {
-			body.push('##' + host.name);
-			body.push(host.body);
-		}
 	});
 
+	var map = {};
+
+	hosts.forEach(function(host) {
+		if (!host.enabled) {
+			return;
+		}
+
+		var pattern = /\s*(\d+\.\d+\.\d+\.\d+)\s+(.+)$/,
+			lines = host.body.split(/\r\n|\n|\r/);
+
+		lines.forEach(function(line) {
+			line = line.replace(/#.*$/);
+			var match = pattern.exec(line);
+			if (match) {
+				var domains = match[2].split(/\s+/);
+				domains.forEach(function(domain) {
+					map[domain]	= match[1];
+				});
+			}
+		});
+	});
+
+	var body = [];
+	for (var k in map) {
+		body.push(map[k] + ' ' + k);
+	}
 	body = body.join('\n');
-	
+
+	var path = getHostPath();
 	fs.writeFile(path, body, fn);
+
 }
