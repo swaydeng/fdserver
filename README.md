@@ -349,6 +349,7 @@ hosts: {
 ### v1.2
 
 - radiance app开发的支持
+- vm开发mock环境支持
 
 
 ## 扩展和开发
