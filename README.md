@@ -20,7 +20,7 @@ fd-server是一个使用node js开发的服务器
 2. cd fdserver
 3. npm install
 4. cp config.js.sample config.js
-5. 修改config.js
+5. 参考配置说明修改config.js
 6. sudo node bin/fdserver # linux 等环境下可以使用sudo bin/fdserver直接运行
 
 [注] 
@@ -29,24 +29,6 @@ fd-server是一个使用node js开发的服务器
 2. win下启动有少许差异，请自行调整
 3. config.js.sample是配置示例文件，需要重命名为 config.js修改成适合您的情况才能运行
 4. 后续会提供在线配置界面
-
-
-## 已支持特性
-
-### v0.7.1
-
-- host		- 多host支持
-- rewrte	- url rewrite
-- merge	- merge文件预合并
-- less		- less开发的支持
-- concat	- tengine concat和小米concat协议支持
-- delay	- 资源延迟返回
-- jade		- jade模板格式支持
-- markdown	- markdown格式支持
-- stylus	- stylus开发的支持
-- app		- 对具有界面功能的开发支持, 目前内置的app有:
-	1. host		- 对host进行管理的一个app demo
-	2. help		- 帮助文档
 
 
 
@@ -327,6 +309,26 @@ hosts: {
 ~~~
 
 你可以在自己的目录下开发app
+
+
+
+## 已支持特性
+
+### v0.7.1
+
+- host		- 多host支持
+- rewrte	- url rewrite
+- merge	- merge文件预合并
+- less		- less开发的支持
+- concat	- tengine concat和小米concat协议支持
+- delay	- 资源延迟返回
+- jade		- jade模板格式支持
+- markdown	- markdown格式支持
+- stylus	- stylus开发的支持
+- app		- 对具有界面功能的开发支持, 目前内置的app有:
+	1. host		- 对host进行管理的一个app demo
+	2. help		- 帮助文档
+
 
 
 ## 将支持特性
