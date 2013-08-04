@@ -66,8 +66,19 @@ var Reload = {
 
 
 	initNav: function() {
+		this.handleNavBar();
 		this.refreshNav();	
 		$('body').on('reload', $.proxy(this, 'refreshNav'));
+	},
+
+
+	handleNavBar: function() {
+		var panel = $('div.nav-panel', '#doc');
+
+		$('div.bar', panel).on('click', 'a.plus,a.minus', function(e) {
+			e.preventDefault();	
+			panel.toggleClass('status-minus', $(this).hasClass('minus'));
+		});
 	},
 
 
@@ -95,7 +106,7 @@ var Reload = {
 
 		html.push('</ul>');
 
-		$('div.nav-container', '#doc').html(html.join(''));
+		$('div.nav-panel .box', '#doc').html(html.join(''));
 	},
 
 

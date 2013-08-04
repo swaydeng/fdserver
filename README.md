@@ -33,25 +33,21 @@ fd-server是一个使用node js开发的服务器
 
 ## 已支持特性
 
-1. host		- 多host支持
-2. rewrte	- url rewrite
-3. merge	- merge文件预合并
-4. less		- less开发的支持
-5. concat	- tengine concat和小米concat协议支持
-6. delay	- 资源延迟返回
-7. jade		- jade模板格式支持
-8. markdown	- markdown格式支持
-9. stylus	- stylus开发的支持
-10. app		- 对具有界面功能的开发支持, 目前内置的app有:
+### v0.7.1
+
+- host		- 多host支持
+- rewrte	- url rewrite
+- merge	- merge文件预合并
+- less		- less开发的支持
+- concat	- tengine concat和小米concat协议支持
+- delay	- 资源延迟返回
+- jade		- jade模板格式支持
+- markdown	- markdown格式支持
+- stylus	- stylus开发的支持
+- app		- 对具有界面功能的开发支持, 目前内置的app有:
 	1. host		- 对host进行管理的一个app demo
+	2. help		- 帮助文档
 
-
-## 将支持特性
-
-1. 可视化配置
-2. autoresponse支持
-3. radiance app开发的支持
-4. fdlint自动描扫描
 
 
 ## 配置和说明
@@ -333,10 +329,30 @@ hosts: {
 你可以在自己的目录下开发app
 
 
+## 将支持特性
+
+### v1.0.0
+
+- 自动升级
+- 可视化配置
+- autoresponse支持
+- jsdoc
+- compress
+- coffee-script
+
+### v1.1 
+
+- fdlint
+
+### v1.2
+
+- radiance app开发的支持
+
+
 ## 扩展和开发
 
 1. 可以参考 lib/filter包下面的示例进行开发
 2. 每个filter都是一个connect中间件, 参考文档 [Connect](http://www.senchalabs.org/connect/logger.html)
-3. 请安装node-dev，这样在开发时，可以在文件修改后自动重启服务器
+3. 请安装node-dev(npm install -g node-dev)，这样在开发时，可以在文件修改后自动重启服务器
 4. 默认启动时，会启动多个子进程，可以加-d选项，在开发时只启动一个进程，以更方便调试
 

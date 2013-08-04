@@ -16,7 +16,14 @@ html
 				div!= body
 				//end-markdown-body
 
-			.nav-container
+			.nav-panel
+				.bar
+					a.plus(href='#')
+						i.icon-plus
+					a.minus(href='#')
+						i.icon-minus
+
+				.box
 
 		script(src='#{assets}/vendor/jquery.js')
 		script(src='#{assets}/vendor/google-code-prettify/prettify.js')
