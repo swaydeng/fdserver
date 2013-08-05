@@ -79,8 +79,8 @@ exports = module.exports = {
 		 * 支持radiance app的开发
 		 */
 		'assets.1688.com': {
-			root: '/home/bencode/work/static_site',
-			app: '/home/bencode/work/site_data',
+			root: '/Users/bencode/work/static_site',
+			app: '/Users/bencode/work/site_data',
 			merge: true,
 			remote: 'http://110.75.196.70'
 		},
