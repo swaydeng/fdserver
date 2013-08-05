@@ -1,6 +1,6 @@
 exports = module.exports = {
 	// port: 80,
-	logger: 'none',
+	//logger: 'dev',
 	
 
 	hosts: {
