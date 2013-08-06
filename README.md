@@ -20,6 +20,7 @@ v0.7.1-13
 
 ## 使用方法
 
+
 在使用之前需要你的机子安装node环境，然后进行以下步骤
 
 1. git clone git://github.com/fangdeng/fdserver.git
