@@ -24,7 +24,6 @@ function autoConfig(file, o) {
 		}
 
 		for (var k in o) {
-			console.log(k)
 			body = body.replace(new RegExp(k), o[k]);
 		}
 
