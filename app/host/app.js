@@ -79,11 +79,12 @@ function getHostPath() {
 	var map = {
 		linux: '/etc/hosts',
 		darwin: '/etc/hosts',
-		windows: 'c:/windows/system32/drivers/etc/hosts'
+		win32: 'c:/windows/system32/drivers/etc/hosts'
 	};
 
-	var os = require('os');
-	return map[os.platform()];
+	var os = require('os'),
+		path = map[os.platform()];
+	return path && fs.existsSync(path) ? path : false;
 }
 
 
@@ -121,6 +122,11 @@ function writeHosts(hosts, fn) {
 	body = body.join('\n');
 
 	var path = getHostPath();
-	fs.writeFile(path, body, fn);
+	if (path) {
+		fs.writeFile(path, body, fn);
+	} else {
+		util.error('unkonw host path');
+	}
+	
 
 }
