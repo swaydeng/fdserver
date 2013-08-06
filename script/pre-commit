@@ -27,8 +27,9 @@ function autoConfig(file, o) {
 			body = body.replace(new RegExp(k), o[k]);
 		}
 
-		fs.writeFile(path, body);
-		exec('git add ' + path);
+		fs.writeFile(path, body, function() {
+			exec('git add ' + path);
+		});
 	});
 }
 
