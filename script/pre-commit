@@ -24,10 +24,14 @@ function autoConfig(file, o) {
 		}
 
 		for (var k in o) {
-			body = body.replace(k, o[k]);
+			console.log(k)
+			body = body.replace(new RegExp(k), o[k]);
 		}
 
+		console.log(body);
+
 		fs.writeFile(path, body);
+		exec('git add ' + path);
 	});
 }
 
@@ -35,7 +39,7 @@ function autoConfig(file, o) {
 exec('git describe', function(error, stdout, stderr) {
 	var pattern = /v\d+\.\d+\.\d+-\d+/;
 	var o = {};
-	o[pattern] = pattern.exec(stdout)[0];
+	o[pattern.source] = pattern.exec(stdout)[0];
 
 	files.forEach(function(file) {
 		autoConfig(file, o);
