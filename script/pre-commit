@@ -35,9 +35,9 @@ function autoConfig(file, o) {
 
 
 exec('git describe', function(error, stdout, stderr) {
-	var pattern = /v\d+\.\d+\.\d+-\d+/;
+	var pattern = /v?(\d+\.\d+\.\d+(-\d+)?)/;
 	var o = {};
-	o[pattern.source] = pattern.exec(stdout)[0];
+	o[pattern.source] = pattern.exec(stdout)[1];
 
 	files.forEach(function(file) {
 		autoConfig(file, o);

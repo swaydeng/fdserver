@@ -13,7 +13,7 @@ fd-server是一个使用node js开发的服务器
 
 ## version
 
-v0.7.1-19
+0.7.2
 
 
 ## 使用方法
