@@ -28,8 +28,6 @@ function autoConfig(file, o) {
 			body = body.replace(new RegExp(k), o[k]);
 		}
 
-		console.log(body);
-
 		fs.writeFile(path, body);
 		exec('git add ' + path);
 	});
