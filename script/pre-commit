@@ -1,0 +1,46 @@
+#!/usr/bin/env node
+
+/**
+ * git pre-commit hook文件运行此脚本
+ */
+
+
+var Path = require('path'),
+	fs = require('fs'),
+	exec = require('child_process').exec;
+
+
+var files = [
+	'README.md', 
+	'package.json'
+];
+
+
+function autoConfig(file, o) {
+	var path = Path.normalize(Path.join(__dirname, '..', file));
+	fs.readFile(path, 'utf-8', function(e, body) {
+		if (e) {
+			throw e;
+		}
+
+		for (var k in o) {
+			body = body.replace(new RegExp(k), o[k]);
+		}
+
+		fs.writeFile(path, body, function() {
+			exec('git add ' + path);
+		});
+	});
+}
+
+
+exec('git describe', function(error, stdout, stderr) {
+	var pattern = /v?(\d+\.\d+\.\d+(-\d+)?)/;
+	var o = {};
+	o[pattern.source] = pattern.exec(stdout)[1];
+
+	files.forEach(function(file) {
+		autoConfig(file, o);
+	});
+
+});
