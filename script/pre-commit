@@ -27,7 +27,6 @@ function autoConfig(file, o) {
 }
 
 
-
 exec('git describe', function(error, stdout, stderr) {
 	var pattern = /v?(\d+\.\d+\.\d+(-\d+)?)/;
 	var o = {};
