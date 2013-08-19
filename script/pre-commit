@@ -26,6 +26,7 @@ function autoConfig(file, o) {
   }
   fs.writeFileSync(path, body);
 	exec('git add ' + path, function() {
+    console.log('complete');
     complete = true; 
   });
 }
