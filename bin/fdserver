@@ -3,21 +3,18 @@ var util = require('util'),
 	Path = require('path'),
 	fs = require('fs'),
 	cluster = require('cluster'),
-	
 	utils = require('../lib/utils');
 
 
-var args = process.argv.slice(2),
-	debug = args.indexOf('-d') !== -1;
+var Cluster = {
+	start: function() {
+		this._start();
+		this._watch();
+	},
 
 
-util.debug = debug ? util.debug : function() {};
+	_start: function() {
 
-
-if (!debug && cluster.isMaster) {
-	var configPath = Path.normalize(Path.join(__dirname, '../config.js'));
-
-	var startCluster = function() {
 		for (var id in cluster.workers) {
 			cluster.workers[id].kill();
 		}
@@ -27,53 +24,70 @@ if (!debug && cluster.isMaster) {
 			cluster.fork();
 		}
 		
-		var watcher = fs.watch(configPath);
-		watcher.on('change', function() {
-			utils.schedule('start-cluster', startCluster, 2000);
+
+		cluster.on('exit', function(worker, code, signal) {
+			util.log('worker ' + worker.process.pid + ' died');
 		});
-	};
+	},
 
 
-	cluster.on('exit', function(worker, code, signal) {
-		util.log('worker ' + worker.process.pid + ' died');
-	});
+	_watch: function() {
+		var self = this,
+			path = Path.normalize(Path.join(__dirname, '../config.js')),
+			watcher = fs.watch(path);
+
+		watcher.on('change', function() {
+			utils.schedule('start-cluster', function() {
+				self._start();	
+			}, 2000);
+		});
+	}
+
+};
 
 
-	startCluster();
+var Server = {
+	start: function() {
+		var server = require('../lib/server'),
+			config = require('../config');
 
-	return;
+		config = this.prepare(config);
+
+		util.log('create server: ' + config.port);
+		var app = server(config);
+		app.listen(config.port);
+	},
+
+
+	prepare: function(config) {
+		var filters = require('../filters');
+		config = utils.extend({
+			port: 80,
+			filters: filters	
+		}, config);
+
+
+		var hosts = config.hosts || {};
+		hosts['127.0.0.1'] = hosts['127.0.0.1'] || {
+			appRoot: Path.normalize(Path.join(__dirname, '../app'))
+		};
+
+		debug && (config.debug = true);
+
+		return config;
+	}
+};
+
+
+
+var args = process.argv.slice(2),
+	debug = args.indexOf('-d') !== -1;
+
+util.debug = debug ? util.debug : function() {};
+
+if (!debug && cluster.isMaster) {
+	Cluster.start();
+} else {
+	Server.start();
 }
 
-
-var server = require('../lib/server'),
-	filters = require('../filters');
-
-
-var start = function() {
-	var config = prepareConfig(require('../config'));
-
-	util.log('create server: ' + config.port);
-	var app = server(config);
-	app.listen(config.port);
-};
-
-
-var prepareConfig = function(config) {
-	config = utils.extend({
-		port: 80,
-		filters: filters	
-	}, config);
-
-
-	var hosts = config.hosts || {};
-	hosts['127.0.0.1'] = hosts['127.0.0.1'] || {
-		appRoot: Path.normalize(Path.join(__dirname, '../app'))
-	};
-
-	debug && (config.debug = true);
-
-	return config;
-};
-
-
-start();
