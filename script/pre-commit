@@ -16,8 +16,6 @@ var files = [
 ];
 
 
-var complete = false;
-
 function autoConfig(file, o) {
 	var path = Path.normalize(Path.join(__dirname, '..', file));
   var body = fs.readFileSync(path, 'utf-8');
@@ -25,10 +23,7 @@ function autoConfig(file, o) {
     body = body.replace(new RegExp(k), o[k]);
   }
   fs.writeFileSync(path, body);
-	exec('git add ' + path, function() {
-    console.log('complete');
-    complete = true; 
-  });
+	exec('git add ' + path);
 }
 
 
@@ -44,11 +39,4 @@ exec('git describe', function(error, stdout, stderr) {
 });
 
 
-function check() {
-  if (!complete) {
-    setTimeout(check, 100);
-  }
-}
-
-check();
- 
+setTimeout(function() {}, 500);
