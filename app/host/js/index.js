@@ -10,6 +10,7 @@ var Index = {
 
 		this.handleEditName();
 		this.handleEditBody();
+		this.handleEditEffect();
 		this.handleAdd();
 		this.handleStatus();
 		this.handleRemove();
@@ -60,6 +61,20 @@ var Index = {
 
 		this.div.on('input', '.body textarea', fn(1000));
 		this.div.on('focusout', '.body textarea', fn(0));
+	},
+
+	
+	handleEditEffect: function() {
+		this.div.on('focusin', '.body textarea', function() {
+			$(this).stop().animate({
+				height: '300px'
+			});
+		});	
+		this.div.on('focusout', '.body textarea', function() {
+			$(this).stop().animate({
+				height: '50px'
+			});
+		});
 	},
 
 
