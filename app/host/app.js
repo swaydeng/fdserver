@@ -104,6 +104,7 @@ function writeHosts(hosts, fn) {
 			lines = host.body.split(/\r\n|\n|\r/);
 
 		lines.forEach(function(line) {
+			line = line.replace(/@[-\w]+/, '')
 			line = line.replace(/#.*$/);
 			var match = pattern.exec(line);
 			if (match) {
