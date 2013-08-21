@@ -155,14 +155,18 @@ var Updater = {
 
 
 	doUpdate: function(last, fn) {
-		util.log('updating...');
-		var path = Util.getPath(last.name);
+		util.log('updating from: [' + last.url + ']');
+		var path = Util.getPath(last.name),
+			dir = Util.getPath('');
+		
 		utils.download(last.url, path, function(e) {
 			if (e) {
+				util.error('download error ' + e);
 				return fn(e);
 			}
 			
-			fn();
+			var unzip = require('../lib/unzip');
+			unzip(path, dir, fn);
 		});
 	},
 
@@ -197,6 +201,17 @@ var Updater = {
 };
 
 
+var Install = {
+	start: function(fn) {
+		util.log('installing...');
+		var exec = require('child_process').exec;
+		exec('npm install', function(error, stdout, stderr) {
+			fn();
+		});
+	}
+};
+
+
 var args = process.argv.slice(2),
 	debug = args.indexOf('-d') !== -1;
 
@@ -210,8 +225,14 @@ if (!debug && cluster.isMaster) {
 	}
 	*/
 
-	Updater.start(function(e) {
-		Cluster.start();
+	Updater.start(function(e, update) {
+		if (update) {
+			Install.start(function() {
+				Cluster.start();	
+			});
+		} else {
+			Cluster.start();
+		}
 	});
 
 } else {
