@@ -209,15 +209,9 @@ var Updater = {
 var Install = {
 	start: function(fn) {
 		util.log('installing...');
-		var spawn = require('child_process').spawn,
-			install = spawn('npm', ['install']);
-
-		var out = function(data) {
-			util.log(data.replace(/\s/, ' '));
-		};
-
-		install.stdout.on('data', out);
-		install.stderr.on('data', out);
+		var spawn = require('child_process').spawn;
+		
+		var install = spawn('npm', ['install'], { stdio: 'inherit' });
 		install.on('close', fn)
 	},
 
@@ -234,12 +228,10 @@ var args = process.argv.slice(2),
 util.debug = debug ? util.debug : function() {};
 
 if (!debug && cluster.isMaster) {
-	/*
 	if (Util.isDevelop()) {
 		Cluster.start();
 		return;
 	}
-	*/
 
 	var fn = function() {
 		Updater.start(function(e, update) {
