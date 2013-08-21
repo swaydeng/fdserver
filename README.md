@@ -13,7 +13,7 @@ fd-server是一个使用node js开发的服务器
 
 ## version
 
-0.7.2-55
+0.7.2-56
 
 ## 使用方法
 
@@ -21,10 +21,17 @@ fd-server是一个使用node js开发的服务器
 在使用之前需要你的机子安装node环境，然后进行以下步骤
 
 1. git clone git://github.com/fangdeng/fdserver.git
+
+	如果没有git可以去 http://42.121.109.6:3000/ 下载
+
 2. cd fdserver
-3. npm install
+
+3. npm install		# 安装依赖库
+
 4. cp config.js.sample config.js
+
 5. 参考配置说明修改config.js
+
 6. sudo node bin/fdserver # linux 等环境下可以使用sudo bin/fdserver直接运行
 
 [注] 
