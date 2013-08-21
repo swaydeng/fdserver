@@ -50,8 +50,10 @@ var Cluster = {
 			cluster.workers[id].kill();
 		}
 
-		var os = require('os');
-		for (var i = 0, c = os.cpus().length * 2; i < c; i++) {
+		var os = require('os'),
+			count = os.cpus().length * 2;
+		count = count < 4 ? 4 : count;
+		for (var i = 0; i < count; i++) {
 			cluster.fork();
 		}
 		
