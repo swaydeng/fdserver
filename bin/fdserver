@@ -175,7 +175,10 @@ var Updater = {
 			}
 			
 			var unzip = require('../lib/unzip');
-			unzip(path, dir, fn);
+			unzip(path, dir, function(e) {
+				fs.unlink(path);
+				fn(e);
+			});
 		});
 	},
 
