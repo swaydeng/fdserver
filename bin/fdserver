@@ -230,7 +230,7 @@ var Install = {
 			return fn();
 		}
 		
-		log.info('config.js not exist, create it for default');
+		util.info('config.js not exist, create it for default');
 		var samplePath = Util.getPath('config.js.sample')
 		fs.createReadStream(samplePath)
 			.pipe(fs.createWriteStream(configPath))
