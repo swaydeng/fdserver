@@ -129,7 +129,12 @@ var Updater = {
 			shouldUpdate = true;	// for test
 
 			if (shouldUpdate) {
-				self.doUpdate(last, fn);
+				self.doUpdate(last, function(e) {
+					if (e) {
+						return fn(e);
+					}
+					return fn(null, true);
+				});
 			} else {
 				fn();
 			}
