@@ -18,19 +18,12 @@ var files = [
 
 function autoConfig(file, o) {
 	var path = Path.normalize(Path.join(__dirname, '..', file));
-	fs.readFile(path, 'utf-8', function(e, body) {
-		if (e) {
-			throw e;
-		}
-
-		for (var k in o) {
-			body = body.replace(new RegExp(k), o[k]);
-		}
-
-		fs.writeFile(path, body, function() {
-			exec('git add ' + path);
-		});
-	});
+  var body = fs.readFileSync(path, 'utf-8');
+  for (var k in o) {
+    body = body.replace(new RegExp(k), o[k]);
+  }
+  fs.writeFileSync(path, body);
+	exec('git add ' + path);
 }
 
 
@@ -44,3 +37,6 @@ exec('git describe', function(error, stdout, stderr) {
 	});
 
 });
+
+
+setTimeout(function() {}, 500);
