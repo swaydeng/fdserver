@@ -86,7 +86,11 @@ var Server = {
 
 		util.log('create server: ' + config.port);
 		var app = server(config);
-		app.listen(config.port);
+		try {
+			app.listen(config.port);
+		} catch (e) {
+			log.error(e);
+		}
 	},
 
 
