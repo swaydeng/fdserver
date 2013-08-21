@@ -209,18 +209,15 @@ var Updater = {
 var Install = {
 	start: function(fn) {
 		util.log('installing...');
-		var spawn = require('child_process').spawn;
+		var spawn = require('child_process').spawn,
+			install = spawn('npm', ['install']);
 
-		var install = spawn('npm', ['install'])
+		var out = function(data) {
+			util.log(data.replace(/\s/, ' '));
+		};
 
-		install.stdout.on('data', function(data) {
-			util.log(data);
-		});
-
-		install.stderr.on('data', function(data) {
-			util.error(data);
-		});
-
+		install.stdout.on('data', out);
+		install.stderr.on('data', out);
 		install.on('close', fn)
 	},
 
