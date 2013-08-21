@@ -87,7 +87,9 @@ var Server = {
 		config = this.prepare(config);
 
 		util.log('create server: ' + config.port);
-		var app = server(config);
+		var http = require('http'),
+			app = server(config);
+
 		app.listen(config.port).on('error', function(e) {
 			util.error(e);
 		});
@@ -251,6 +253,8 @@ var args = process.argv.slice(2),
 util.debug = debug ? util.debug : function() {};
 
 if (!debug && cluster.isMaster) {
+	Cluster.start();
+	/*
 	if (Util.isDevelop()) {
 		Cluster.start();
 		return;
@@ -273,7 +277,7 @@ if (!debug && cluster.isMaster) {
 	} else {
 		Install.start(fn);
 	}
-
+	*/
 } else {
 	Server.start();
 }
