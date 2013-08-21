@@ -208,6 +208,11 @@ var Install = {
 		exec('npm install', function(error, stdout, stderr) {
 			fn();
 		});
+	},
+
+	check: function() {
+		var path = Util.getPath('node_modules');
+		return fs.existsSync(path);
 	}
 };
 
@@ -225,15 +230,24 @@ if (!debug && cluster.isMaster) {
 	}
 	*/
 
-	Updater.start(function(e, update) {
-		if (update) {
-			Install.start(function() {
-				Cluster.start();	
-			});
-		} else {
-			Cluster.start();
-		}
-	});
+	var fn = function() {
+		Updater.start(function(e, update) {
+			if (update) {
+				Install.start(function() {
+					Cluster.start();	
+				});
+			} else {
+				Cluster.start();
+			}
+		});
+	};
+
+	if (Install.check()) {
+		fn();
+	} else {
+		Install.start(fn);
+	}
+
 } else {
 	Server.start();
 }
