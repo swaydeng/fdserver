@@ -216,11 +216,27 @@ var Updater = {
 var Install = {
 	start: function(fn) {
 		util.log('installing...');
-		var spawn = require('child_process').spawn;
-		
-		var install = spawn('npm', ['install'], { stdio: 'inherit' });
-		install.on('close', fn)
+		this.prepareConfig(function() {
+			var spawn = require('child_process').spawn;
+			var install = spawn('npm', ['install'], { stdio: 'inherit' });
+			install.on('close', fn);
+		});
 	},
+
+
+	prepareConfig: function(fn) {
+		var configPath = Util.getPath('config.js');
+		if (fs.existsSync(configPath)) {
+			return fn();
+		}
+		
+		log.info('config.js not exist, create it for default');
+		var samplePath = Util.getPath('config.js.sample')
+		fs.createReadStream(samplePath)
+			.pipe(fs.createWriteStream(configPath))
+			.on('end', fn);
+	},
+
 
 	check: function() {
 		var path = Util.getPath('node_modules');
