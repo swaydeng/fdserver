@@ -204,10 +204,19 @@ var Updater = {
 var Install = {
 	start: function(fn) {
 		util.log('installing...');
-		var exec = require('child_process').exec;
-		exec('npm install', function(error, stdout, stderr) {
-			fn();
+		var spawn = require('child_process').spawn;
+
+		var install = spawn('npm', ['install'])
+
+		install.stdout.on('data', function(data) {
+			util.log(data);
 		});
+
+		install.stderr.on('data', function(data) {
+			util.error(data);
+		});
+
+		install.on('close', fn)
 	},
 
 	check: function() {
