@@ -218,12 +218,12 @@ var args = process.argv.slice(2),
 util.debug = debug ? util.debug : function() {};
 
 if (!debug && cluster.isMaster) {
+	Cluster.start();	
 	/*
 	if (Util.isDevelop()) {
 		Cluster.start();
 		return;
 	}
-	*/
 
 	Updater.start(function(e, update) {
 		if (update) {
@@ -234,7 +234,7 @@ if (!debug && cluster.isMaster) {
 			Cluster.start();
 		}
 	});
-
+	*/
 } else {
 	Server.start();
 }
