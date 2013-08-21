@@ -25,7 +25,7 @@ var Util = {
 			lines = body.split(/\n+/);
 		lines.forEach(function(line) {
 			var parts = line.split(/:/);	
-			o[parts[0]] = parts.slice(1).join(':');
+			o[parts[0].trim()] = parts.slice(1).join(':').trim();
 		});
 		return o;
 	},
