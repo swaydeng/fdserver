@@ -1,6 +1,6 @@
 {
 	"name": "fdserver",
-	"version": "0.7.2-57",
+	"version": "0.7.2-60",
 
 	"description": "a server for web developer",
 
@@ -31,7 +31,8 @@
 	"dependencies": {
 		"connect": ">=2.8",
 		"iconv-lite": ">=0.2.10",
-		"mime": ">=1.2.9"
+		"mime": ">=1.2.9",
+		"mkdirp": ">=0.3.5"
 	},
 
 	"devDependencies": {
