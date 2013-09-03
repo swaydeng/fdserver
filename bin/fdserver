@@ -8,7 +8,7 @@ var util = require('util'),
 
 var Util = {
 	getPath: function(path) {
-		return Path.normalize(Path.join(__dirname, '../' + path));	
+		return Path.normalize(Path.join(__dirname, '../' + path));
 	}
 };
 
