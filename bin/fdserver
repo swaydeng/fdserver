@@ -7,30 +7,6 @@ var util = require('util'),
 
 
 var Util = {
-	isDevelop: function() {
-		var path = this.getPath('.git/HEAD');
-		if (!fs.existsSync(path)) {
-			return false;
-		}
-		
-		var body = fs.readFileSync(path, 'utf-8'),
-			info = this.parseInfo(body);
-		
-		return info.ref !== 'refs/heads/master';
-	},
-
-
-	parseInfo: function(body) {
-		var o = {},
-			lines = body.split(/\n+/);
-		lines.forEach(function(line) {
-			var parts = line.split(/:/);	
-			o[parts[0].trim()] = parts.slice(1).join(':').trim();
-		});
-		return o;
-	},
-
-
 	getPath: function(path) {
 		return Path.normalize(Path.join(__dirname, '../' + path));	
 	}
@@ -45,7 +21,6 @@ var Cluster = {
 
 
 	_start: function() {
-
 		for (var id in cluster.workers) {
 			cluster.workers[id].kill();
 		}
@@ -57,7 +32,6 @@ var Cluster = {
 			cluster.fork();
 		}
 		
-
 		cluster.on('exit', function(worker, code, signal) {
 			util.log('worker ' + worker.process.pid + ' died');
 		});
@@ -119,165 +93,16 @@ var Server = {
 };
 
 
-var Updater = {
-	start: function(fn) {
-		var self = this;
-		this.getInfo(function(e, info) {
-			if (e) {
-				util.error('update error:' + e);
-				return fn();
-			}
-
-			var last = info.list[0],
-				version = self.getVersion(),
-				shouldUpdate = self.compareVersion(version, last.version) < 0;
-			
-			shouldUpdate = true;	// for test
-
-			if (shouldUpdate) {
-				self.doUpdate(last, function(e) {
-					if (e) {
-						return fn(e);
-					}
-					return fn(null, true);
-				});
-			} else {
-				fn();
-			}
-		});
-	},
-
-
-	getInfo: function(fn) {
-		var url = 'http://42.121.109.6:3000/info';
-		utils.getUrlContent(url, function(e, chunk) {
-			if (e) {
-				return fn(e);
-			}
-
-			try {
-				var info = JSON.parse(chunk.toString());
-				fn(null, info);
-			} catch (e) {
-				fn(e);
-			}
-		});
-	},
-
-
-	doUpdate: function(last, fn) {
-		util.log('updating from: [' + last.url + ']');
-		var path = Util.getPath(last.name),
-			dir = Util.getPath('');
-		
-		utils.download(last.url, path, function(e) {
-			if (e) {
-				util.error('download error ' + e);
-				return fn(e);
-			}
-			
-			var unzip = require('../lib/unzip');
-			unzip(path, dir, function(e) {
-				fs.unlink(path);
-				fn(e);
-			});
-		});
-	},
-
-
-	getVersion: function() {
-		var path = Util.getPath('package.json');
-		try {
-			var info = fs.readFileSync(path, 'utf-8');
-			info = JSON.parse(info);
-			return info.version;
-		} catch(e) {
-			return null;
-		}
-	},
-
-	
-	compareVersion: function(left, right) {
-		left = left.split(/\D/),
-		right = right.split(/\D/);
-		var c = Math.max(left.length, right.length);
-		for (var i = 0; i < c; i++) {
-			var a = parseInt(left[i]) || 0,
-				b = parseInt(right[i]) || 0;
-			if (a !== b) {
-				return a < b ? -1 : 1;
-			}
-		}
-
-		return 0;
-	}
-	
-};
-
-
-var Install = {
-	start: function(fn) {
-		util.log('installing...');
-		this.prepareConfig(function() {
-			var spawn = require('child_process').spawn;
-			var install = spawn('npm', ['install'], { stdio: 'inherit' });
-			install.on('close', fn);
-		});
-	},
-
-
-	prepareConfig: function(fn) {
-		var configPath = Util.getPath('config.js');
-		if (fs.existsSync(configPath)) {
-			return fn();
-		}
-		
-		util.info('config.js not exist, create it for default');
-		var samplePath = Util.getPath('config.js.sample')
-		fs.createReadStream(samplePath)
-			.pipe(fs.createWriteStream(configPath))
-			.on('end', fn);
-	},
-
-
-	check: function() {
-		var path = Util.getPath('node_modules');
-		return fs.existsSync(path);
-	}
-};
-
-
 var args = process.argv.slice(2),
 	debug = args.indexOf('-d') !== -1;
 
 util.debug = debug ? util.debug : function() {};
 
 if (!debug && cluster.isMaster) {
-	Cluster.start();
-	/*
-	if (Util.isDevelop()) {
+	var install = require('../lib/install');
+	install.start(function() {
 		Cluster.start();
-		return;
-	}
-
-	var fn = function() {
-		Updater.start(function(e, update) {
-			if (update) {
-				Install.start(function() {
-					Cluster.start();	
-				});
-			} else {
-				Cluster.start();
-			}
-		});
-	};
-
-	if (Install.check()) {
-		fn();
-	} else {
-		Install.start(fn);
-	}
-	*/
+	});
 } else {
 	Server.start();
 }
