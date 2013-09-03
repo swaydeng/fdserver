@@ -26,8 +26,8 @@ var Cluster = {
 		}
 
 		var os = require('os'),
-			count = os.cpus().length * 2;
-		count = count < 4 ? 4 : count;
+			count = os.cpus().length;
+		count = count < 2 ? 2 : count;
 		for (var i = 0; i < count; i++) {
 			cluster.fork();
 		}
@@ -99,10 +99,13 @@ var args = process.argv.slice(2),
 util.debug = debug ? util.debug : function() {};
 
 if (!debug && cluster.isMaster) {
+	Cluster.start();
+	/*
 	var install = require('../lib/install');
 	install.start(function() {
 		Cluster.start();
 	});
+	*/
 } else {
 	Server.start();
 }
