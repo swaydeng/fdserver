@@ -26,8 +26,8 @@ var Cluster = {
 		}
 
 		var os = require('os'),
-			count = os.cpus().length * 2;
-		count = count < 2 ? 2 : count;
+			count = os.cpus().length;
+
 		for (var i = 0; i < count; i++) {
 			cluster.fork();
 		}
