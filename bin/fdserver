@@ -66,7 +66,7 @@ var Server = {
 
 		app.listen(config.port).on('error', function(e) {
 			util.error(e);
-		});
+		}).setTimeout(10 * 1000);
 	},
 
 
@@ -97,6 +97,7 @@ var args = process.argv.slice(2),
 	debug = args.indexOf('-d') !== -1;
 
 util.debug = debug ? util.debug : function() {};
+util.debug = function() {};
 
 if (!debug && cluster.isMaster) {
 	Cluster.start();
