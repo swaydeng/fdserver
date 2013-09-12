@@ -6,6 +6,12 @@ var util = require('util'),
 	utils = require('../lib/utils');
 
 
+var args = process.argv.slice(2),
+	debug = args.indexOf('-d') !== -1;
+
+util.debug = debug ? util.debug : function() {};
+
+
 var Util = {
 	getPath: function(path) {
 		return Path.normalize(Path.join(__dirname, '../' + path));
@@ -72,11 +78,17 @@ var Server = {
 
 	prepare: function(config) {
 		var filters = require('../filters');
+
 		config = utils.extend({
 			port: 80,
 			filters: filters
 		}, config);
 
+		var index = args.indexOf('-p'),
+			port = index !== -1 ? parseInt(args[index + 1]) : null;
+		if (port) {
+			config.port = port;
+		}
 
 		var hosts = config.hosts || {};
 		var o = {
@@ -92,11 +104,6 @@ var Server = {
 	}
 };
 
-
-var args = process.argv.slice(2),
-	debug = args.indexOf('-d') !== -1;
-
-util.debug = debug ? util.debug : function() {};
 
 if (!debug && cluster.isMaster) {
 	Cluster.start();
