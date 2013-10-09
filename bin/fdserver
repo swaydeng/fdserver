@@ -72,7 +72,7 @@ var Server = {
 
 		app.listen(config.port).on('error', function(e) {
 			util.error(e);
-		}).setTimeout(10 * 1000);
+		});
 	},
 
 
