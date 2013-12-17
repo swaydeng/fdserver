@@ -322,7 +322,18 @@ hosts: {
 
 ## 已支持特性
 
-### v0.7.1
+
+### v0.8.5
+
+
+- outputCharset支持
+
+支持配置outputCharset，输出html, css文件时Context-Type中会指定charset
+
+- 去掉connect 3.0已废弃方法警告
+
+
+### v0.7
 
 - host		- 多host支持
 - rewrte	- url rewrite
@@ -336,28 +347,6 @@ hosts: {
 - app		- 对具有界面功能的开发支持, 目前内置的app有:
 	1. host		- 对host进行管理的一个app demo
 	2. help		- 帮助文档
-
-
-
-## 将支持特性
-
-### v1.0.0
-
-- 自动升级
-- 可视化配置
-- autoresponse支持
-- jsdoc
-- compress
-- coffee-script
-
-### v1.1 
-
-- fdlint
-
-### v1.2
-
-- radiance app开发的支持
-- vm开发mock环境支持
 
 
 ## 扩展和开发
