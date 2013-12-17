@@ -330,6 +330,17 @@ hosts: {
 
 支持配置outputCharset，输出html, css文件时Context-Type中会指定charset
 
+示例(config.js)
+
+~~~js
+	hosts: {
+		'webroot': {
+			root: '/Users/bencode/webroot',
+			outputCharset: 'gbk'
+		},
+		...
+~~~
+
 - 去掉connect 3.0已废弃方法警告
 
 
