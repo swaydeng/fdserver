@@ -17,13 +17,13 @@ fd-server是一个使用node js开发的服务器
 
 在使用之前需要你的机子安装node环境，然后进行以下步骤
 
-1. git clone git://github.com/fangdeng/fdserver.git
+1. git clone https://github.com/fangdeng/fdserver.git
 
-	如果没有git可以去 http://42.121.109.6:3000/ 下载
+如果没有git可以去 http://42.121.109.6:3000/ 下载
 
 2. cd fdserver
 
-3. npm install		# 安装依赖库
+3. npm install --registry http://registry.cnpmjs.org # 安装依赖库
 
 4. cp config.js.sample config.js
 
