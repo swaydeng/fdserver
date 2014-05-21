@@ -54,6 +54,24 @@ exports = module.exports = {
 			// concatSplit: true
 		},
 
+		/**
+		 * astyle开发的支持
+		 */
+		'astyle.alicdn.com': {
+			root: '/Users/bencode/webroot/styles',
+			rewrite: [{
+				// 配置开发的分支路径
+				from: /^app\/dsc\/(.*)$/,
+				to: 'detail/$1'
+			}, 
+				
+			// 其他文件代理到线上
+			{   
+				from: '^(.*)$',
+				to: 'http://110.75.196.23$1'
+			}]
+		},
+
 
 		/**
 		 * style combine 配置 

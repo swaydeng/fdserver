@@ -11,22 +11,19 @@ fd-server是一个使用node js开发的服务器
 
 你也可以在上面随意写写nodejs代码来扩展一些有意思的功能，整天开发客户端代码也够无聊的 (^_^)
 
-## version
-
-0.7.2-56
 
 ## 使用方法
 
 
 在使用之前需要你的机子安装node环境，然后进行以下步骤
 
-1. git clone git://github.com/fangdeng/fdserver.git
+1. git clone https://github.com/fangdeng/fdserver.git
 
-	如果没有git可以去 http://42.121.109.6:3000/ 下载
+如果没有git可以去 http://42.121.109.6:3000/ 下载
 
 2. cd fdserver
 
-3. npm install		# 安装依赖库
+3. npm install --registry http://registry.cnpmjs.org # 安装依赖库
 
 4. cp config.js.sample config.js
 
@@ -325,7 +322,29 @@ hosts: {
 
 ## 已支持特性
 
-### v0.7.1
+
+### v0.8.5
+
+
+- outputCharset支持
+
+支持配置outputCharset，输出html, css文件时Context-Type中会指定charset
+
+示例(config.js)
+
+~~~js
+	hosts: {
+		'webroot': {
+			root: '/Users/bencode/webroot',
+			outputCharset: 'gbk'
+		},
+		...
+~~~
+
+- 去掉connect 3.0已废弃方法警告
+
+
+### v0.7
 
 - host		- 多host支持
 - rewrte	- url rewrite
@@ -339,28 +358,6 @@ hosts: {
 - app		- 对具有界面功能的开发支持, 目前内置的app有:
 	1. host		- 对host进行管理的一个app demo
 	2. help		- 帮助文档
-
-
-
-## 将支持特性
-
-### v1.0.0
-
-- 自动升级
-- 可视化配置
-- autoresponse支持
-- jsdoc
-- compress
-- coffee-script
-
-### v1.1 
-
-- fdlint
-
-### v1.2
-
-- radiance app开发的支持
-- vm开发mock环境支持
 
 
 ## 扩展和开发
