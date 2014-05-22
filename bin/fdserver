@@ -1,168 +1,173 @@
 #!/usr/bin/env node
 
-var ARGV = process.argv;
-var fs = require('fs');
-var exec = require('child_process').exec;
-var Path = require('path');
+var util = require('util'),
+    Path = require('path'),
+    fs = require('fs'),
+    cluster = require('cluster'),
+    serverPidFile = Path.join(__dirname, '../run/app.pid'),
+    utils = require('../lib/utils');
+
 var nopt = require('nopt');
 
 var knownOpts = {
     "configfile": String,
+    "debug": Boolean,
+    "port": Number,
     "help": Boolean
 };
 
 var shortHands = {
+    "p": ["--port"],
+    "d": ["--debug"],
     "cf": ["--configfile"],
     "h": ["--help"]
 }
 
+var parsed = nopt(knownOpts, shortHands, process.argv);
 
-var parsed = nopt(knownOpts, shortHands, ARGV);
-
-var action = parsed.argv.remain[0];
+var debug = parsed.debug ? parsed.debug : false;
 
 var configFile = parsed.configfile ? parsed.configfile : '';
 
-if(!parsed.argv.original.length || parsed.help) {
+if(parsed.help) {
   p(_help());
   return;
 }
 
-var serverPidFile = Path.join(__dirname, '../run/app.pid');
-var serverPath = Path.join(__dirname, '../fdserver.js');
-var serverlog = Path.join(__dirname, '../server.log');
-var param = ' ';
-
-for( var i = 1, l = parsed.argv.original.length; i < l; i++ ) {
-	param += parsed.argv.original[i] + ' ';
-}
-
-var startserverCMD = 'node ' + serverPath + param + ' > ' + serverlog + ' 2>&1 &';
+util.debug = debug ? util.debug : function() {};
 
 
-function startServer() {
+var Util = {
+    getPath: function(path) {
+        return Path.normalize(Path.join(__dirname, '../' + path));
+    }
+};
 
-    function _start() {
-        exec(startserverCMD, function (error, stdout, stderr) {
-        	if(stderr) {
-        		startServerCb(stderr);
-        		return;
-        	}
-            if (error) {
-                startServerCb(error);
-                return;
+
+var Cluster = {
+    start: function() {
+        this._start();
+        this._watch();
+    },
+
+
+    _start: function() {
+        for (var id in cluster.workers) {
+            cluster.workers[id].kill();
+        }
+
+        var os = require('os'),
+            count = os.cpus().length;
+
+        for (var i = 0; i < count; i++) {
+            cluster.fork();
+        }
+        
+        cluster.on('exit', function(worker, code, signal) {
+            util.log('worker ' + worker.process.pid + ' died');
+        });
+    },
+
+
+    _watch: function() {
+        var self = this;
+        var defaultConfigPath = Util.getPath('config.js');
+        var path = '';
+
+        if( configFile ) {
+            if( fs.existsSync(configFile) ) {
+                path = configFile;
             }
-                
-            startServerCb(null);
+        } else {
+            if( fs.existsSync(defaultConfigPath) ) {
+                path = defaultConfigPath;
+            }
+        }
+
+        if( !path ) {
+            throw new Error('你的fdserver目录里没有config.js');
+        }
+
+        var watcher = fs.watch(path);
+
+        watcher.on('change', function() {
+            utils.schedule('start-cluster', function() {
+                self._start();  
+            }, 2000);
         });
     }
 
-    if( fs.existsSync(serverPidFile) ) {
-        var pid = fs.readFileSync(serverPidFile).toString() || 0;
+};
 
-        if( isPidExists(pid) ) {
-            console.log('Server is running');
-            return;
-        } else {
-            _start();
-            return;
-        }
-    } else {
-        _start();
-        return;
-    }
-}
 
-function startServerCb(e) {
-    if( e ) {
-        p('start server failed');
-        return;
-    }
+var Server = {
+    start: function() {
+        var server = require('../lib/server');
+        var defaultConfigPath = Util.getPath('config.js');
+        var config = {};
 
-    p('start server successfully');
-}
-
-function stopServer() {
-
-    function _stop(pid) {
-
-        exec('kill -15 ' + pid, function (error, stdout, stderr) {
-            if(stderr) {
-        		stopServerCb(stderr);
-        		return;
-        	}
-            if (error) {
-                stopServerCb(error);
-                return;
+        if( configFile ) {
+            if( fs.existsSync(configFile) ) {
+                config = require(configFile);
             }
-                
-            stopServerCb(null);
-        });
-    }
-
-    if( !fs.existsSync(serverPidFile) ) {
-        p('Server is  not running who care?');
-        return;
-    }
-
-    if( fs.existsSync(serverPidFile) ) {
-        var pid = fs.readFileSync(serverPidFile).toString() || 0;
-
-        if( isPidExists(pid) ) {
-            _stop(pid);
-            return;
         } else {
-            p('Server is  not running who care?');
-            return;
+            if( fs.existsSync(defaultConfigPath) ) {
+                config = require(defaultConfigPath);
+            } else {
+                throw new Error('你的fdserver目录里没有config.js');
+            }
         }
+
+        config = this.prepare(config);
+
+        util.log('create server: ' + config.port);
+        var http = require('http'),
+            app = server(config);
+
+        app.listen(config.port).on('error', function(e) {
+            util.error(e);
+        });
+    },
+
+
+    prepare: function(config) {
+        var filters = require('../filters');
+
+        config = utils.extend({
+            port: 80,
+            filters: filters
+        }, config);
+
+        var port = parsed.port;
+
+        if (port) {
+            config.port = port;
+        }
+
+        var hosts = config.hosts || {};
+        var o = {
+            appRoot: Util.getPath('app')
+        };
+
+        hosts['127.0.0.1'] = hosts['127.0.0.1'] || o;
+        hosts['fdserver'] = hosts['fdserver'] || o;
+
+        debug && (config.debug = true);
+
+        return config;
     }
-    
-}
-
-function stopServerCb(e) {
-    if( e ) {
-        p('stop server failed', e.message);
-        return;
-    }
-
-    p('stop server successfully');
-}
-
-function restartServer() {
-    stopServer();
-
-    setTimeout(function(){
-        startServer();
-    }, 1000);
-}
-
-
-function isPidExists(pid) {
-    try{
-        result = process.kill(pid, 0);
-        return result;
-    }catch(e) {
-        return e.code === 'EPERM';
-    }
-}
-
-
+};
 
 function _help() {
   return [
-  ' Useage: fdserver start',
-  '                  stop',
-  '                  restart',
-  '                  [-cf configfile]',
-  '                  [-h help]',
+  ' Useage: ./fdserver',
   '',
   ' Options:',
   '',
-  '   start                         启动fdserver',
-  '   stop                          停止fdserver',
-  '   restart                       重启fdserver',
-  '   -cf  | --configfile           指定配置文件地址，默认为fdserver中自带的config.js文件',
-  '   -h   | --help                 打印帮助信息'
+  '   -d   | --debug           [可选]以debug模式启动,只开启一个进程',
+  '   -p   | --port            [可选]指定端口号，默认为80',
+  '   -cf  | --configfile      [可选]可以通过此配置指定文件的地址',
+  '   -h   | --help            打印帮助信息'
   ].join('\n');
 }
 
@@ -170,16 +175,23 @@ function p() {
   console.log.apply(console, arguments);
 }
 
-switch(action) {
-    case 'start':
-        startServer();
-        break;
-    case 'stop':
-        stopServer();
-        break;
-    case 'restart':
-        restartServer();
-        break;
-    default :
-        p(_help());
+
+if (!debug && cluster.isMaster) {
+    fs.writeFileSync(serverPidFile, process.pid);
+    Cluster.start();
+    /*
+    var install = require('../lib/install');
+    install.start(function() {
+        Cluster.start();
+    });
+    */
+} else {
+    Server.start();
 }
+
+process.on('SIGTERM', function() {
+    if( fs.existsSync(serverPidFile) ) {
+       fs.unlinkSync(serverPidFile);
+    }
+    process.exit(0);
+})
