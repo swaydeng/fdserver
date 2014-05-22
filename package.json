@@ -24,16 +24,17 @@
     }
   ],
   "dependencies": {
+    "coffee-script": ">=1.6",
+    "connect": ">=2.11.0",
+    "ejs": ">=0.8.4",
     "iconv-lite": ">=0.2.10",
+    "jade": ">=0.31.1",
+    "less": "1.6.1",
+    "marked": ">=0.2.9",
     "mime": ">=1.2.9",
     "mkdirp": ">=0.3.5",
-    "connect": ">=2.11.0",
-    "jade": ">=0.31.1",
-    "ejs": ">=0.8.4",
-    "less": "1.6.1",
-    "stylus": ">=0.34",
-    "marked": ">=0.2.9",
-    "coffee-script": ">=1.6"
+    "nopt": "~2.2.1",
+    "stylus": ">=0.34"
   },
   "repository": {
     "type": "git",

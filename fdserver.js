@@ -1,0 +1,179 @@
+var util = require('util'),
+	Path = require('path'),
+	fs = require('fs'),
+	cluster = require('cluster'),
+	serverPidFile = Path.join(__dirname, 'run/app.pid'),
+	utils = require('./lib/utils');
+
+var nopt = require('nopt');
+
+var knownOpts = {
+    "configfile": String,
+    "debug": Boolean,
+    "port": Number,
+    "help": Boolean
+};
+
+var shortHands = {
+	"p": ["--port"],
+	"d": ["--debug"],
+    "cf": ["--configfile"],
+    "h": ["--help"]
+}
+
+var parsed = nopt(knownOpts, shortHands, process.argv);
+
+var debug = parsed.debug ? parsed.debug : false;
+
+var configFile = parsed.configfile ? parsed.configfile : '';
+
+if(parsed.help) {
+  p(_help());
+  return;
+}
+
+util.debug = debug ? util.debug : function() {};
+
+
+var Util = {
+	getPath: function(path) {
+		return Path.normalize(Path.join(__dirname, './' + path));
+	}
+};
+
+
+var Cluster = {
+	start: function() {
+		this._start();
+		this._watch();
+	},
+
+
+	_start: function() {
+		for (var id in cluster.workers) {
+			cluster.workers[id].kill();
+		}
+
+		var os = require('os'),
+			count = os.cpus().length;
+
+		for (var i = 0; i < count; i++) {
+			cluster.fork();
+		}
+		
+		cluster.on('exit', function(worker, code, signal) {
+			util.log('worker ' + worker.process.pid + ' died');
+		});
+	},
+
+
+	_watch: function() {
+		var self = this;
+		var path = Util.getPath('config.js');
+
+		if( configFile ) {
+			if( fs.existsSync(configFile) ) {
+				path = configFile;
+			}
+		}
+			
+		var watcher = fs.watch(path);
+
+		watcher.on('change', function() {
+			utils.schedule('start-cluster', function() {
+				self._start();	
+			}, 2000);
+		});
+	}
+
+};
+
+
+var Server = {
+	start: function() {
+		var server = require('./lib/server'),
+			config = require('./config');
+
+		if( configFile ) {
+			if( fs.existsSync(configFile) ) {
+				config = require(configFile);
+			}
+		}
+
+		config = this.prepare(config);
+
+		util.log('create server: ' + config.port);
+		var http = require('http'),
+			app = server(config);
+
+		app.listen(config.port).on('error', function(e) {
+			util.error(e);
+		});
+	},
+
+
+	prepare: function(config) {
+		var filters = require('./filters');
+
+		config = utils.extend({
+			port: 80,
+			filters: filters
+		}, config);
+
+		var port = parsed.port;
+
+		if (port) {
+			config.port = port;
+		}
+
+		var hosts = config.hosts || {};
+		var o = {
+			appRoot: Util.getPath('app')
+		};
+
+		hosts['127.0.0.1'] = hosts['127.0.0.1'] || o;
+		hosts['fdserver'] = hosts['fdserver'] || o;
+
+		debug && (config.debug = true);
+
+		return config;
+	}
+};
+
+function _help() {
+  return [
+  ' Useage: node fdserver.js',
+  '',
+  ' Options:',
+  '',
+  '   -d   | --debug           [可选]以debug模式启动,只开启一个进程',
+  '   -p   | --port            [可选]指定端口号，默认为80',
+  '   -cf  | --configfile      [可选]可以通过此配置指定文件的地址',
+  '   -h   | --help            打印帮助信息'
+  ].join('\n');
+}
+
+function p() {
+  console.log.apply(console, arguments);
+}
+
+
+if (!debug && cluster.isMaster) {
+	fs.writeFileSync(serverPidFile, process.pid);
+	Cluster.start();
+	/*
+	var install = require('../lib/install');
+	install.start(function() {
+		Cluster.start();
+	});
+	*/
+} else {
+	Server.start();
+}
+
+process.on('SIGTERM', function() {
+	if( fs.existsSync(serverPidFile) ) {
+       fs.unlinkSync(serverPidFile);
+    }
+    process.exit(0);
+})
