@@ -1,0 +1,184 @@
+#!/usr/bin/env node
+
+var ARGV = process.argv;
+var fs = require('fs');
+var exec = require('child_process').exec;
+var Path = require('path');
+var nopt = require('nopt');
+
+var knownOpts = {
+    "configfile": String,
+    "help": Boolean
+};
+
+var shortHands = {
+    "cf": ["--configfile"],
+    "h": ["--help"]
+}
+
+
+var parsed = nopt(knownOpts, shortHands, ARGV);
+
+var action = parsed.argv.remain[0];
+
+var configFile = parsed.configfile ? parsed.configfile : '';
+
+if(!parsed.argv.original.length || parsed.help) {
+  p(_help());
+  return;
+}
+
+var serverPidFile = Path.join(__dirname, '../run/app.pid');
+var serverPath = Path.join(__dirname, './fdserver');
+var serverlog = Path.join(__dirname, '../server.log');
+var param = ' ';
+
+for( var i = 1, l = parsed.argv.original.length; i < l; i++ ) {
+	param += parsed.argv.original[i] + ' ';
+}
+
+var startserverCMD = 'nohup node ' + serverPath + param + ' > ' + serverlog + ' 2>&1 &';
+
+function startServer() {
+
+    function _start() {
+        exec(startserverCMD, function (error, stdout, stderr) {
+        	if(stderr) {
+        		startServerCb(stderr);
+        		return;
+        	}
+            if (error) {
+                startServerCb(error);
+                return;
+            }
+                
+            startServerCb(null);
+        });
+    }
+
+    if( fs.existsSync(serverPidFile) ) {
+        var pid = fs.readFileSync(serverPidFile).toString() || 0;
+
+        if( isPidExists(pid) ) {
+            console.log('Server is running');
+            return;
+        } else {
+            _start();
+            return;
+        }
+    } else {
+        _start();
+        return;
+    }
+}
+
+function startServerCb(e) {
+    if( e ) {
+        p('start server failed', e);
+        return;
+    }
+
+    p('start server successfully, please check', serverlog);
+}
+
+function stopServer() {
+
+    function _stop(pid) {
+
+        exec('kill -15 ' + pid, function (error, stdout, stderr) {
+            if(stderr) {
+        		stopServerCb(stderr);
+        		return;
+        	}
+            if (error) {
+                stopServerCb(error);
+                return;
+            }
+                
+            stopServerCb(null);
+        });
+    }
+
+    if( !fs.existsSync(serverPidFile) ) {
+        p('Server is  not running who care?');
+        return;
+    }
+
+    if( fs.existsSync(serverPidFile) ) {
+        var pid = fs.readFileSync(serverPidFile).toString() || 0;
+
+        if( isPidExists(pid) ) {
+            _stop(pid);
+            return;
+        } else {
+            p('Server is  not running who care?');
+            return;
+        }
+    }
+    
+}
+
+function stopServerCb(e) {
+    if( e ) {
+        p('stop server failed', e);
+        return;
+    }
+
+    p('stop server successfully');
+}
+
+function restartServer() {
+    stopServer();
+
+    setTimeout(function(){
+        startServer();
+    }, 1000);
+}
+
+
+function isPidExists(pid) {
+    try{
+        result = process.kill(pid, 0);
+        return result;
+    }catch(e) {
+        return e.code === 'EPERM';
+    }
+}
+
+
+
+function _help() {
+  return [
+  ' Useage: appctl   start',
+  '                  stop',
+  '                  restart',
+  '                  [-cf configfile]',
+  '                  [-h help]',
+  '',
+  ' Options:',
+  '',
+  '   start                         启动fdserver',
+  '   stop                          停止fdserver',
+  '   restart                       重启fdserver',
+  '   -cf  | --configfile           指定配置文件地址，默认为fdserver中自带的config.js文件',
+  '   -h   | --help                 打印帮助信息'
+  ].join('\n');
+}
+
+function p() {
+  console.log.apply(console, arguments);
+}
+
+switch(action) {
+    case 'start':
+        startServer();
+        break;
+    case 'stop':
+        stopServer();
+        break;
+    case 'restart':
+        restartServer();
+        break;
+    default :
+        p(_help());
+}
