@@ -1,5 +1,6 @@
 module.exports = [
 	'app',
+    'figo',
 	'less',
 	'markdown',
 	'jade',
