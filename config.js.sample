@@ -47,7 +47,7 @@ exports = module.exports = {
 				// 其他文件代理到线上
 				{
 					from: '^(.*)$',
-					to: 'http://110.75.196.23$1'
+					to: 'http://42.156.140.62$1'
 				}
 			],
 
@@ -68,16 +68,8 @@ exports = module.exports = {
 			// 其他文件代理到线上
 			{   
 				from: '^(.*)$',
-				to: 'http://110.75.196.23$1'
+				to: 'http://42.156.140.62$1'
 			}]
-		},
-
-
-		/**
-		 * style combine 配置 
-		 */
-		'cdn.c.aliimg.com': {
-			//concatSplit: true
 		},
 
 
@@ -103,7 +95,7 @@ exports = module.exports = {
 			root: '/Users/bencode/work/static_site',
 			app: '/Users/bencode/work/site_data',
 			merge: true,
-			remote: 'http://110.75.196.70'
+			remote: 'http://110.75.96.29'
 		},
 		
 
