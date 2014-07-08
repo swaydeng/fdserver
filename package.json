@@ -25,7 +25,7 @@
   ],
   "dependencies": {
     "coffee-script": ">=1.6",
-    "connect": ">=2.11.0",
+    "connect": "2.11.0",
     "ejs": ">=0.8.4",
     "iconv-lite": ">=0.2.10",
     "jade": ">=0.31.1",
