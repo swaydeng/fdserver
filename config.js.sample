@@ -5,7 +5,18 @@ exports = module.exports = {
 	// port: 80,
 	//logger: 'dev',
 	
-
+	filters:[
+		'app',
+		'less',
+		'markdown',
+		'jade',
+		'stylus',
+		'merge',
+		'delay',
+		'concat',
+		'host',
+		'rewrite'
+	],
 	hosts: {
 		// 简单的host
 		'webroot': {

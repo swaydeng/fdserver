@@ -132,12 +132,14 @@ var Server = {
 
     prepare: function(config) {
         var filters = require('../filters');
-
-        config = utils.extend({
-            port: 80,
-            filters: filters
-        }, config);
-
+        // 取config自带的filter,便于将Filter配置整合到config.js
+        if(!config.filters){
+            config = utils.extend({
+                port: 80,
+                filters: filters
+            }, config);
+        }
+        
         var port = parsed.port;
 
         if (port) {
