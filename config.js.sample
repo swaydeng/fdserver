@@ -14,6 +14,7 @@ exports = module.exports = {
 		'merge',
 		'delay',
 		'concat',
+		'livereload',
 		'host',
 		'rewrite'
 	],

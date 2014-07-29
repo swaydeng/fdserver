@@ -343,6 +343,9 @@ hosts: {
 
 - 去掉connect 3.0已废弃方法警告
 
+### 0.8.6
+
+ - livereload - html实时监控，需配合gulp/grunt插件使用
 
 ### v0.7
 
