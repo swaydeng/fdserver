@@ -14,6 +14,7 @@ exports = module.exports = {
 		'merge',
 		'delay',
 		'concat',
+		'tpl2js',
 		'livereload',
 		'host',
 		'rewrite'
@@ -24,7 +25,13 @@ exports = module.exports = {
 			root: '/Users/bencode/webroot'
 		},
 
-
+		//项目示例,arttemplate自动编译
+		'project':{
+			root: '/Users/bencode/webroot/project',
+			tpl2js:{
+				"type":'fmd'
+			}
+		},
 		/**
 		 * style示例
 		 */

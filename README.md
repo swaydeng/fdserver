@@ -318,10 +318,47 @@ hosts: {
 
 你可以在自己的目录下开发app
 
+### livereload
+
+对html本身里的引用的js/css文件自动监控，支持实时刷新，实时编译，需与gulp/grunt的watch配合
+
+### tpl2js
+
+方便arttemplate的实时编译调试
+
+- 如果访问``.art``或``.tpl``文件时，编译成``.js``文件输出
+
+- 配置放在对应的host配置中,建议针对不同的项目设置不同的hostname
+
+```
+hosts: {
+	project: {
+		root: '/Users/bencode/project',
+		tpl2js:{
+			type:'fmd',
+			alias:'lib/template'
+		}
+	}
+}
+
+```
+- 配置说明
+
+字段 | 类型 | 默认值| 说明
+------------ | ------------- | ------------ | ------------
+type | String | ``fmd`` | 返回的模块类型，可选：``fmd``、``pure-fmd``、``cmd``、``amd``、``commonjs``，参考[Ali-tmodjs](http://gitlab.alibaba-inc.com/fangdeng/ali-tmodjs/tree/master)
+alias | String | ``template`` | arttemplate的主文件的模块id名
 
 
 ## 已支持特性
 
+### 0.8.8
+
+ - tpl2js - arttemplate开发支持
+
+### 0.8.6
+
+ - livereload - html实时监控，需配合gulp/grunt插件使用
 
 ### v0.8.5
 
@@ -343,9 +380,7 @@ hosts: {
 
 - 去掉connect 3.0已废弃方法警告
 
-### 0.8.6
 
- - livereload - html实时监控，需配合gulp/grunt插件使用
 
 ### v0.7
 
