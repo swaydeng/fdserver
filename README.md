@@ -350,6 +350,33 @@ type | String | ``fmd`` | 返回的模块类型，可选：``fmd``、``pure-fmd`
 alias | String | ``template`` | arttemplate的主文件的模块id名
 
 
+### chinese2unicode
+
+动态地将被请求的 js 文件中的中文转成 unicode 形式。使用很简单，如需要转 unicode，首先需要确保已注册了 chinese2unicode 模块：
+
+```
+filters: [
+    'less',
+    ~~
+    'chinese2unicode', \\ 确保已注册
+    ~~
+    'host',
+    'rewrite'
+]
+```
+
+然后在对应的 rewrite 规则里增加一个 chinese2unicode 字段、并设置为 true 即可，形如：
+
+```
+{
+    from: /^\/m\/huopin\/(.*)$/,
+    to: '$1',
+    chinese2unicode: true
+}
+
+```
+
+
 ## 已支持特性
 
 ### 0.8.8
